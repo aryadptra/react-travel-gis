@@ -10,6 +10,9 @@ import Api from "../../../api";
 //import js cookie
 import Cookies from "js-cookie";
 
+//import Link from react router dom
+import { Link } from "react-router-dom";
+
 function PlacesIndex() {
   //title page
   document.title = "Places - Administrator Travel GIS";
@@ -26,13 +29,19 @@ function PlacesIndex() {
   //state total
   const [total, setTotal] = useState(0);
 
+  //state search
+  const [search, setSearch] = useState("");
+
   //token
   const token = Cookies.get("token");
 
   //function "fetchData"
-  const fetchData = async () => {
+  const fetchData = async (searchData) => {
+    //define variable "searchQuery"
+    const searchQuery = searchData ? searchData : search;
+
     //fetching data from Rest API
-    await Api.get("/api/admin/places", {
+    await Api.get(`/api/admin/places?q=${searchQuery}`, {
       headers: {
         //header Bearer + Token
         Authorization: `Bearer ${token}`,
@@ -60,6 +69,14 @@ function PlacesIndex() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  //function "searchHandler"
+  const searchHandlder = (e) => {
+    e.preventDefault();
+
+    //call function "fetchDataPost"
+    fetchData(search);
+  };
+
   return (
     <React.Fragment>
       <LayoutAdmin>
@@ -72,6 +89,27 @@ function PlacesIndex() {
                 </span>
               </div>
               <div className="card-body">
+                <form onSubmit={searchHandlder} className="form-group">
+                  <div className="input-group mb-3">
+                    <Link
+                      to="/admin/places/create"
+                      className="btn btn-md btn-success"
+                    >
+                      <i className="fa fa-plus-circle"></i> ADD NEW
+                    </Link>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      placeholder="search by place title"
+                    />
+                    <button type="submit" className="btn btn-md btn-success">
+                      <i className="fa fa-search"></i> SEARCH
+                    </button>
+                  </div>
+                </form>
+
                 <div className="table-responsive">
                   <table className="table table-bordered table-striped table-hovered">
                     <thead>
