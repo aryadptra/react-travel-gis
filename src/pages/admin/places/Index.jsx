@@ -13,6 +13,9 @@ import Cookies from "js-cookie";
 //import Link from react router dom
 import { Link } from "react-router-dom";
 
+//import pagination component
+import PaginationComponent from "../../../components/utilities/Pagination";
+
 function PlacesIndex() {
   //title page
   document.title = "Places - Administrator Travel GIS";
@@ -36,12 +39,15 @@ function PlacesIndex() {
   const token = Cookies.get("token");
 
   //function "fetchData"
-  const fetchData = async (searchData) => {
+  const fetchData = async (pageNumber, searchData) => {
+    //define variable "page"
+    const page = pageNumber ? pageNumber : currentPage;
+
     //define variable "searchQuery"
     const searchQuery = searchData ? searchData : search;
 
     //fetching data from Rest API
-    await Api.get(`/api/admin/places?q=${searchQuery}`, {
+    await Api.get(`/api/admin/places?q=${searchQuery}&page=${page}`, {
       headers: {
         //header Bearer + Token
         Authorization: `Bearer ${token}`,
@@ -74,7 +80,7 @@ function PlacesIndex() {
     e.preventDefault();
 
     //call function "fetchDataPost"
-    fetchData(search);
+    fetchData(1, search);
   };
 
   return (
@@ -134,6 +140,13 @@ function PlacesIndex() {
                     </tbody>
                   </table>
                 </div>
+                <PaginationComponent
+                  currentPage={currentPage}
+                  perPage={perPage}
+                  total={total}
+                  onChange={(pageNumber) => fetchData(pageNumber)}
+                  position="end"
+                />
               </div>
             </div>
           </div>
