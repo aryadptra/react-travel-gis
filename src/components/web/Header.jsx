@@ -10,9 +10,18 @@ import { Link } from "react-router-dom";
 //import BASE URL API
 import Api from "../../api";
 
+//import js cookie
+import Cookies from "js-cookie";
+
 function WebHeader() {
   //state categories
   const [categories, setCategories] = useState([]);
+
+  //state user logged in
+  const [user, setUser] = useState({});
+
+  //token
+  const token = Cookies.get("token");
 
   //function "fetchDataCategories"
   const fetchDataCategories = async () => {
@@ -23,10 +32,30 @@ function WebHeader() {
     });
   };
 
+  //function "fetchDataUser"
+  const fetchDataUser = async () => {
+    //fetching Rest API "user"
+    await Api.get("/api/admin/user", {
+      headers: {
+        //header Bearer + Token
+        Authorization: `Bearer ${token}`,
+      },
+    }).then((response) => {
+      //set data to state
+      setUser(response.data);
+    });
+  };
+
   //hook
   useEffect(() => {
     //call function "fetchDataCategories"
     fetchDataCategories();
+
+    //if token already exists
+    if (token) {
+      //call function "fetchDataUser"
+      fetchDataUser();
+    }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -85,9 +114,18 @@ function WebHeader() {
               <Nav.Link className="fw-bold text-white me-4">
                 <i className="fa fa-search"></i> SEARCH
               </Nav.Link>
-              <Link to="/admin/login" className="btn btn-md btn-light">
-                <i className="fa fa-lock"></i> LOGIN
-              </Link>
+              {token ? (
+                <Link
+                  to="/admin/dashboard"
+                  className="btn btn-md btn-light text-uppercase"
+                >
+                  <i className="fa fa-user-circle"></i> {user.name}
+                </Link>
+              ) : (
+                <Link to="/admin/login" className="btn btn-md btn-light">
+                  <i className="fa fa-lock"></i> LOGIN
+                </Link>
+              )}
             </Nav>
           </Navbar.Collapse>
         </Container>
