@@ -1,5 +1,5 @@
 //import hook from react
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 //import layout
 import LayoutAdmin from "../../../layouts/Admin";
@@ -21,6 +21,15 @@ import ReactQuill from "react-quill";
 
 // quill CSS
 import "react-quill/dist/quill.snow.css";
+
+//mapbox gl
+import mapboxgl from "mapbox-gl"; // eslint-disable-line import/no-webpack-loader-syntax
+
+//mapbox gl geocoder
+import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
+
+//api key mapbox
+mapboxgl.accessToken = import.meta.env.VITE_APP_MAPBOX;
 
 function PlaceCreate() {
   //title page
@@ -146,6 +155,70 @@ function PlaceCreate() {
         setValidation(error.response.data);
       });
   };
+
+  //=========================================================
+  //MAPBOX
+  //=========================================================
+
+  //define state
+  const mapContainer = useRef(null);
+
+  useEffect(() => {
+    //init map
+    const map = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: "mapbox://styles/mapbox/streets-v12",
+      center: [longitude, latitude],
+      zoom: 12,
+    });
+
+    //init geocoder
+    const geocoder = new MapboxGeocoder({
+      accessToken: mapboxgl.accessToken,
+
+      marker: {
+        draggable: true,
+      },
+
+      mapboxgl: mapboxgl,
+    });
+
+    //add geocoder to map
+    map.addControl(geocoder);
+
+    //init marker
+    const marker = new mapboxgl.Marker({
+      draggable: true,
+      color: "rgb(47 128 237)",
+    })
+
+      //set longtitude and latitude
+      .setLngLat([longitude, latitude])
+      //add marker to map
+      .addTo(map);
+
+    //geocoder result
+    geocoder.on("result", function (e) {
+      //remove marker
+      marker.remove();
+
+      //set longitude and latitude
+      marker
+        .setLngLat(e.result.center)
+
+        //add to map
+        .addTo(map);
+
+      //event marker on dragend
+      marker.on("dragend", function (e) {
+        //assign longitude and latitude to state
+        setLongitude(e.target._lngLat.lng);
+        setLatitude(e.target._lngLat.lat);
+      });
+    });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <React.Fragment>
@@ -328,6 +401,11 @@ function PlaceCreate() {
                           {validation.longitude[0]}
                         </div>
                       )}
+                    </div>
+                    <div className="row mb-3">
+                      <div className="col-md-12">
+                        <div ref={mapContainer} className="map-container" />
+                      </div>
                     </div>
                   </div>
                   <div>
