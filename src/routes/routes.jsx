@@ -29,6 +29,9 @@ import PlacesIndex from "../pages/admin/places/Index.jsx";
 //import view admin places Create
 import PlaceCreate from "../pages/admin/places/Create.jsx";
 
+//import view admin places Edit
+import PlaceEdit from "../pages/admin/places/Edit.jsx";
+
 function RoutesIndex() {
   return (
     <Routes>
@@ -91,6 +94,16 @@ function RoutesIndex() {
         element={
           <PrivateRoute>
             <PlaceCreate />
+          </PrivateRoute>
+        }
+      />
+
+      {/* private route "/admin/places/edit/:id" */}
+      <Route
+        path="/admin/places/edit/:id"
+        element={
+          <PrivateRoute>
+            <PlaceEdit />
           </PrivateRoute>
         }
       />

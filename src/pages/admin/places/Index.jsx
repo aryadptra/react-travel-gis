@@ -184,6 +184,12 @@ function PlacesIndex() {
                           <td>{place.title}</td>
                           <td>{place.category.name}</td>
                           <td className="text-center">
+                            <Link
+                              to={`/admin/places/edit/${place.id}`}
+                              className="btn btn-sm btn-primary me-2"
+                            >
+                              <i className="fa fa-pencil-alt"></i>
+                            </Link>
                             <button
                               onClick={() => deletePlace(place.id)}
                               className="btn btn-sm btn-danger"
