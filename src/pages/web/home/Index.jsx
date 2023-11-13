@@ -13,13 +13,22 @@ import Api from "../../../api";
 //import cart category component
 import CardCategory from "../../../components/utilities/CardCategory";
 
+//import react router dom
+import { useNavigate } from "react-router-dom";
+
 function Home() {
   //title page
   document.title =
     "TRAVEL GIS - Website Wisata Berbasis GIS (Geographic Information System)";
 
+  //navigate
+  const navigate = useNavigate();
+
   //state categories
   const [categories, setCategories] = useState([]);
+
+  //state keyword
+  const [keyword, setKeyword] = useState("");
 
   //function "fetchDataCategories"
   const fetchDataCategories = async () => {
@@ -35,6 +44,12 @@ function Home() {
     //call function "fetchDataCategories"
     fetchDataCategories();
   }, []);
+
+  //function "searchHandler"
+  const searchHandler = () => {
+    //redirect with params "keyword"
+    navigate(`/search?q=${keyword}`);
+  };
 
   return (
     <React.Fragment>
@@ -54,6 +69,9 @@ function Home() {
                   <input
                     type="text"
                     className="form-control"
+                    value={keyword}
+                    onChange={(e) => setKeyword(e.target.value)}
+                    onKeyPress={(e) => e.key === "Enter" && searchHandler()}
                     placeholder="find your destination here..."
                   />
                 </div>
