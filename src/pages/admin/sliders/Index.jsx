@@ -13,6 +13,9 @@ import Cookies from "js-cookie";
 //import Link from react router dom
 import { Link } from "react-router-dom";
 
+//import pagination component
+import PaginationComponent from "../../../components/utilities/Pagination";
+
 function SlidersIndex() {
   //title page
   document.title = "Sliders - Administrator Travel GIS";
@@ -33,9 +36,12 @@ function SlidersIndex() {
   const token = Cookies.get("token");
 
   //function "fetchData"
-  const fetchData = async () => {
+  const fetchData = async (pageNumber) => {
+    //define variable "page"
+    const page = pageNumber ? pageNumber : currentPage;
+
     //fetching data from Rest API
-    await Api.get("/api/admin/sliders", {
+    await Api.get(`/api/admin/sliders?page=${page}`, {
       headers: {
         //header Bearer + Token
         Authorization: `Bearer ${token}`,
@@ -111,6 +117,13 @@ function SlidersIndex() {
                       ))}
                     </tbody>
                   </table>
+                  <PaginationComponent
+                    currentPage={currentPage}
+                    perPage={perPage}
+                    total={total}
+                    onChange={(pageNumber) => fetchData(pageNumber)}
+                    position="end"
+                  />
                 </div>
               </div>
             </div>
