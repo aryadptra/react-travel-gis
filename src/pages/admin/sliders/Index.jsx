@@ -16,6 +16,15 @@ import { Link } from "react-router-dom";
 //import pagination component
 import PaginationComponent from "../../../components/utilities/Pagination";
 
+//import toats
+import toast from "react-hot-toast";
+
+//import react-confirm-alert
+import { confirmAlert } from "react-confirm-alert";
+
+//import CSS react-confirm-alert
+import "react-confirm-alert/src/react-confirm-alert.css"; // Import css
+
 function SlidersIndex() {
   //title page
   document.title = "Sliders - Administrator Travel GIS";
@@ -69,6 +78,46 @@ function SlidersIndex() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  //function "deleteSlider"
+  const deleteSlider = (id) => {
+    //show confirm alert
+    confirmAlert({
+      title: "Are You Sure ?",
+      message: "want to delete this data ?",
+      buttons: [
+        {
+          label: "YES",
+          onClick: async () => {
+            await Api.delete(`/api/admin/sliders/${id}`, {
+              headers: {
+                //header Bearer + Token
+                Authorization: `Bearer ${token}`,
+              },
+            }).then(() => {
+              //show toast
+              toast.success("Data Deleted Successfully!", {
+                duration: 4000,
+                position: "top-right",
+                style: {
+                  borderRadius: "10px",
+                  background: "#333",
+                  color: "#fff",
+                },
+              });
+
+              //call function "fetchData"
+              fetchData();
+            });
+          },
+        },
+        {
+          label: "NO",
+          onClick: () => {},
+        },
+      ],
+    });
+  };
+
   return (
     <React.Fragment>
       <LayoutAdmin>
@@ -112,7 +161,14 @@ function SlidersIndex() {
                               className="rounded"
                             />
                           </td>
-                          <td className="text-center"></td>
+                          <td className="text-center">
+                            <button
+                              onClick={() => deleteSlider(slider.id)}
+                              className="btn btn-sm btn-danger"
+                            >
+                              <i className="fa fa-trash"></i>
+                            </button>
+                          </td>
                         </tr>
                       ))}
                     </tbody>
