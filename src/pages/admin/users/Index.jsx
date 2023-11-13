@@ -13,6 +13,9 @@ import Cookies from "js-cookie";
 //import Link from react router dom
 import { Link } from "react-router-dom";
 
+//import pagination component
+import PaginationComponent from "../../../components/utilities/Pagination";
+
 function UsersIndex() {
   //title page
   document.title = "Users - Administrator Travel GIS";
@@ -36,12 +39,15 @@ function UsersIndex() {
   const [search, setSearch] = useState("");
 
   //function "fetchData"
-  const fetchData = async (searchData) => {
+  const fetchData = async (pageNumber, searchData) => {
+    //define variable "page"
+    const page = pageNumber ? pageNumber : currentPage;
+
     //define variable "searchQuery"
     const searchQuery = searchData ? searchData : search;
 
     //fetching data from Rest API
-    await Api.get(`/api/admin/users?q=${searchQuery}`, {
+    await Api.get(`/api/admin/users?q=${searchQuery}&page=${page}`, {
       headers: {
         //header Bearer + Token
         Authorization: `Bearer ${token}`,
@@ -73,8 +79,8 @@ function UsersIndex() {
   const searchHandlder = (e) => {
     e.preventDefault();
 
-    //call function "fetchDataPost" with state search
-    fetchData(search);
+    //call function "fetchDataPost" with state search and page number
+    fetchData(1, search);
   };
 
   return (
@@ -132,6 +138,13 @@ function UsersIndex() {
                       ))}
                     </tbody>
                   </table>
+                  <PaginationComponent
+                    currentPage={currentPage}
+                    perPage={perPage}
+                    total={total}
+                    onChange={(pageNumber) => fetchData(pageNumber)}
+                    position="end"
+                  />
                 </div>
               </div>
             </div>
