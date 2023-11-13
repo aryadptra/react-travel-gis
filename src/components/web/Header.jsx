@@ -1,5 +1,5 @@
 //import react and hook
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 //import component react bootstrap
 import { Navbar, Container, Nav, NavDropdown } from "react-bootstrap";
@@ -7,7 +7,30 @@ import { Navbar, Container, Nav, NavDropdown } from "react-bootstrap";
 //import react router dom
 import { Link } from "react-router-dom";
 
+//import BASE URL API
+import Api from "../../api";
+
 function WebHeader() {
+  //state categories
+  const [categories, setCategories] = useState([]);
+
+  //function "fetchDataCategories"
+  const fetchDataCategories = async () => {
+    //fetching Rest API "categories"
+    await Api.get("/api/web/categories").then((response) => {
+      //set data to state
+      setCategories(response.data.data);
+    });
+  };
+
+  //hook
+  useEffect(() => {
+    //call function "fetchDataCategories"
+    fetchDataCategories();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <React.Fragment>
       <Navbar
@@ -32,6 +55,20 @@ function WebHeader() {
                 id="collasible-nav-dropdown"
                 className="fw-bold text-white"
               >
+                {categories.map((category) => (
+                  <NavDropdown.Item
+                    as={Link}
+                    to={`/category/${category.slug}`}
+                    key={category.id}
+                  >
+                    <img
+                      src={category.image}
+                      style={{ width: "35px" }}
+                      alt=""
+                    />{" "}
+                    {category.name.toUpperCase()}
+                  </NavDropdown.Item>
+                ))}
                 <NavDropdown.Divider />
                 <NavDropdown.Item as={Link} to="/posts/direction">
                   LIHAT LAINNYA <i className="fa fa-long-arrow-alt-right"></i>
