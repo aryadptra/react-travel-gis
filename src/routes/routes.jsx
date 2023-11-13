@@ -11,11 +11,14 @@ import Login from "../pages/admin/Login.jsx";
 //import component private routes
 import PrivateRoute from "./PrivateRoutes";
 
-import Categories from "../pages/admin/categories/Index.jsx";
+//import view admin Dashboard
 import Dashboard from "../pages/admin/dashboard/Index.jsx";
 
-//import view admin Dashboard
-// import Dashboard from "../pages/admin/dashboard/Index";
+//import view admin categories Index
+import CategoriesIndex from "../pages/admin/categories/Index.jsx";
+
+//import view admin category Create
+import CategoryCreate from "../pages/admin/categories/Create.jsx";
 
 function RoutesIndex() {
   return (
@@ -38,7 +41,17 @@ function RoutesIndex() {
         path="/admin/categories"
         element={
           <PrivateRoute>
-            <Categories />
+            <CategoriesIndex />
+          </PrivateRoute>
+        }
+      />
+
+      {/* private route "/admin/categories/create" */}
+      <Route
+        path="/admin/categories/create"
+        element={
+          <PrivateRoute>
+            <CategoryCreate />
           </PrivateRoute>
         }
       />
