@@ -54,6 +54,9 @@ import UserEdit from "../pages/admin/users/Edit.jsx";
 //import view web Home
 import Home from "../pages/web/home/Index.jsx";
 
+//import view web category Show
+import WebCategoryShow from "../pages/web/categories/Show.jsx";
+
 function RoutesIndex() {
   return (
     <Routes>
@@ -182,6 +185,9 @@ function RoutesIndex() {
 
       {/* route "/" */}
       <Route path="/" element={<Home />} />
+
+      {/* route "/category/:slug" */}
+      <Route path="/category/:slug" element={<WebCategoryShow />} />
     </Routes>
   );
 }
