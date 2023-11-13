@@ -10,6 +10,12 @@ import LayoutWeb from "../../../layouts/Web";
 //import BASE URL API
 import Api from "../../../api";
 
+//import imageGallery
+import ImageGallery from "react-image-gallery";
+
+//import imageGallery CSS
+import "react-image-gallery/styles/css/image-gallery.css";
+
 function WebPlaceShow() {
   //state place
   const [place, setPlace] = useState({});
@@ -37,6 +43,31 @@ function WebPlaceShow() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  //=================================================================
+  // react image gallery
+  //=================================================================
+
+  //define image array
+  const images = [];
+
+  //function "placeImages"
+  const placeImages = () => {
+    //loop data from object "place"
+    for (let value in place.images) {
+      //push to image array
+      images.push({
+        original: place.images[value].image,
+        thumbnail: place.images[value].image,
+      });
+    }
+  };
+
+  //hook
+  useEffect(() => {
+    //call function "placeImage"
+    placeImages();
+  });
+
   return (
     <React.Fragment>
       <LayoutWeb>
@@ -50,6 +81,7 @@ function WebPlaceShow() {
                     <i className="fa fa-map-marker"></i> <i>{place.address}</i>
                   </span>
                   <hr />
+                  <ImageGallery items={images} autoPlay={true} />
                   <div
                     dangerouslySetInnerHTML={{ __html: place.description }}
                   />
