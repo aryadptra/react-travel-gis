@@ -1,5 +1,5 @@
 //import hook react
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 //import react router dom
 import { Link, useParams } from "react-router-dom";
@@ -16,9 +16,18 @@ import ImageGallery from "react-image-gallery";
 //import imageGallery CSS
 import "react-image-gallery/styles/css/image-gallery.css";
 
+//import mapbox gl
+import mapboxgl from "mapbox-gl"; // eslint-disable-line import/no-webpack-loader-syntax
+
+//api key mapbox
+mapboxgl.accessToken = import.meta.env.VITE_APP_MAPBOX;
+
 function WebPlaceShow() {
   //state place
   const [place, setPlace] = useState({});
+
+  //map container
+  const mapContainer = useRef(null);
 
   //slug params
   const { slug } = useParams();
@@ -62,10 +71,42 @@ function WebPlaceShow() {
     }
   };
 
+  //=================================================================
+  // mapbox
+  //=================================================================
+
+  //function "initMap"
+  const initMap = () => {
+    //init Map
+    const map = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: "mapbox://styles/mapbox/streets-v12",
+      center: [
+        place.longitude ? place.longitude : "",
+        place.latitude ? place.latitude : "",
+      ],
+      zoom: 15,
+    });
+
+    //init popup
+    new mapboxgl.Popup({
+      closeOnClick: false,
+    })
+      .setLngLat([
+        place.longitude ? place.longitude : "",
+        place.latitude ? place.latitude : "",
+      ])
+      .setHTML(`<h6>${place.title}</h6><hr/><p><i>${place.address}</i></p>`)
+      .addTo(map);
+  };
+
   //hook
   useEffect(() => {
     //call function "placeImage"
     placeImages();
+
+    //call function "initMap"
+    initMap();
   });
 
   return (
@@ -81,7 +122,7 @@ function WebPlaceShow() {
                     <i className="fa fa-map-marker"></i> <i>{place.address}</i>
                   </span>
                   <hr />
-                  <ImageGallery items={images} autoPlay={true} />
+                  <ImageGallery items={images} />
                   <div
                     dangerouslySetInnerHTML={{ __html: place.description }}
                   />
@@ -95,6 +136,11 @@ function WebPlaceShow() {
                     <i className="fa fa-map-marked-alt"></i> MAPS
                   </h5>
                   <hr />
+                  <div
+                    ref={mapContainer}
+                    className="map-container"
+                    style={{ height: "350px" }}
+                  />
                 </div>
                 <hr />
                 <div className="card-body">
