@@ -26,6 +26,9 @@ import CategoryEdit from "../pages/admin/categories/Edit.jsx";
 //import view admin places Index
 import PlacesIndex from "../pages/admin/places/Index.jsx";
 
+//import view admin places Create
+import PlaceCreate from "../pages/admin/places/Create.jsx";
+
 function RoutesIndex() {
   return (
     <Routes>
@@ -78,6 +81,16 @@ function RoutesIndex() {
         element={
           <PrivateRoute>
             <PlacesIndex />
+          </PrivateRoute>
+        }
+      />
+
+      {/* private route "/admin/places/create" */}
+      <Route
+        path="/admin/places/create"
+        element={
+          <PrivateRoute>
+            <PlaceCreate />
           </PrivateRoute>
         }
       />
